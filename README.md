@@ -27,6 +27,34 @@
 
 <hr />
 
+## 🚀 Install
+
+One line. No global install, no `npm i -g`. Always use `bunx`:
+
+```bash
+bunx lazycodex install
+```
+
+This is shorthand for `bunx omo install --platform=codex`. For a fully autonomous, no-TUI setup:
+
+```bash
+bunx lazycodex install --no-tui --codex-autonomous
+```
+
+## ⚡ Commands
+
+LazyCodex adds three workflow commands to your OpenCode session:
+
+| Command | Syntax | What it does |
+| --- | --- | --- |
+| `$ulw-loop` | `/ulw-loop "task" [--completion-promise=TEXT] [--strategy=reset\|continue]` | Self-referential loop that runs until Oracle-verified completion. Caps at 500 iterations in ultrawork mode, 100 in normal mode. |
+| `$ulw-plan` | `/ulw-plan "what to build"` | Prometheus strategic planner. Writes a plan to `plans/<slug>.md`. Never writes product code. |
+| `$start-work` | `/start-work [plan-name] [--worktree <path>]` | Executes a plan until every checkbox is done. Prints **ORCHESTRATION COMPLETE**. |
+
+Full documentation lives at [lazycodex.ai/docs](https://lazycodex.ai/docs).
+
+<hr />
+
 ## 💤 What is this?
 
 **LazyCodex** is the **lazy way** to get [OmO (oh-my-openagent)](https://github.com/code-yeongyu/oh-my-openagent) up and running.
