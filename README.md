@@ -112,6 +112,8 @@ OmO is the agent harness: discipline agents, parallel orchestration, multi-model
 
 > _"LazyVim made Neovim usable for the rest of us. LazyCodex does the same for Codex."_
 
+Credit: The LazyCodex name idea is inspired by [LazyVim](https://github.com/LazyVim/LazyVim). The Ultragoal and UltraQA ideas are inspired by [oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex), reimplemented from concept for this Codex setup.
+
 ## 🧩 What you get
 
 | Feature | Description |
