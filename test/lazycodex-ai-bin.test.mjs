@@ -1,5 +1,6 @@
 import assert from "node:assert/strict"
-import { existsSync, readFileSync } from "node:fs"
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { spawnSync } from "node:child_process"
 import { describe, it } from "node:test"
@@ -67,8 +68,47 @@ describe("lazycc npm package", () => {
         `cp -R ${join(root, "plugins", "omo", "lazycc-skills", "cursor-delegation")} ${join(process.env.HOME, ".codex", "skills", "cursor-delegation")}`,
         `cp -R ${join(root, "bin")} ${join(process.env.HOME, ".codex", "lazycc", "bin")}`,
         `cp -R ${join(root, "packages", "cursor-ai-proxy-bridge")} ${join(process.env.HOME, ".codex", "lazycc", "packages", "cursor-ai-proxy-bridge")}`,
+        `repair ${join(process.env.HOME, ".codex", "config.toml")} model=gpt-5.4`,
       ].join("\n"),
     )
+  })
+
+  it("repairs the OmO-managed Codex model config that can stall model loading", () => {
+    const home = mkdtempSync(join(tmpdir(), "lazycc-home-"))
+    try {
+      const configPath = join(home, ".codex", "config.toml")
+      mkdirSync(join(home, ".codex"), { recursive: true })
+      writeFileSync(
+        configPath,
+        [
+          'model = "gpt-5.5"',
+          "model_context_window = 400000",
+          'model_reasoning_effort = "high"',
+          'plan_mode_reasoning_effort = "xhigh"',
+          "",
+          "[features]",
+          "plugins = true",
+          "",
+        ].join("\n"),
+        { flag: "wx" },
+      )
+
+      const result = spawnSync(process.execPath, [lazyccBinPath, "repair", "codex-model"], {
+        cwd: root,
+        encoding: "utf8",
+        env: { ...process.env, HOME: home },
+      })
+
+      assert.equal(result.status, 0, result.stderr)
+      const repaired = readFileSync(configPath, "utf8")
+      assert.match(repaired, /model = "gpt-5\.4"/)
+      assert.match(repaired, /model_reasoning_effort = "medium"/)
+      assert.doesNotMatch(repaired, /model_context_window/)
+      assert.doesNotMatch(repaired, /plan_mode_reasoning_effort/)
+      assert.match(repaired, /\[features\]/)
+    } finally {
+      rmSync(home, { recursive: true, force: true })
+    }
   })
 
   it("keeps the legacy lazycodex-ai bin as an oh-my-openagent compatibility alias", () => {

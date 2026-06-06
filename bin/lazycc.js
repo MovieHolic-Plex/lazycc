@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { existsSync } from "node:fs"
-import { cp, mkdir, rm } from "node:fs/promises"
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises"
 import { homedir } from "node:os"
 import { dirname, join } from "node:path"
 import { spawnSync } from "node:child_process"
@@ -24,6 +24,8 @@ if (command === "install") {
   await runBridge(args.slice(1))
 } else if (command === "cursor") {
   await runCursor(args.slice(1))
+} else if (command === "repair") {
+  await runRepair(args.slice(1))
 } else if (command === "help" || command === "--help" || command === "-h" || command === undefined) {
   printHelp()
 } else {
@@ -31,16 +33,22 @@ if (command === "install") {
 }
 
 async function runOmoInstall(forwardedArgs) {
-  runCommand("npx", [
-    "--yes",
-    "--package",
-    "oh-my-openagent",
-    "omo",
-    "install",
-    "--platform=codex",
-    ...forwardedArgs,
-  ])
+  runCommand(
+    "npx",
+    [
+      "--yes",
+      "--package",
+      "oh-my-openagent",
+      "omo",
+      "install",
+      "--platform=codex",
+      ...forwardedArgs,
+    ],
+    undefined,
+    codexModelMigrationDisabledEnv(),
+  )
   await installLazyccSkills()
+  await repairCodexModelConfig()
 }
 
 function runOmoCommand(forwardedArgs) {
@@ -69,6 +77,104 @@ async function installLazyccSkills() {
     recursive: true,
     filter: (source) => !source.includes(`${join("node_modules")}`) && !source.includes(`${join("dist")}`),
   })
+}
+
+async function runRepair(argv) {
+  const subcommand = argv[0]
+  if (subcommand !== "codex-model") {
+    repairHelp()
+    process.exitCode = subcommand === "help" || subcommand === undefined ? 0 : 1
+    return
+  }
+  await repairCodexModelConfig(readValue(argv.slice(1), "--model") ?? "gpt-5.4")
+}
+
+async function repairCodexModelConfig(targetModel = "gpt-5.4") {
+  const configPath = join(homedir(), ".codex", "config.toml")
+  if (dryRun) {
+    process.stdout.write(`repair ${configPath} model=${targetModel}\n`)
+    return
+  }
+
+  let before
+  try {
+    before = await readFile(configPath, "utf8")
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return
+    throw error
+  }
+
+  const after = repairCodexModelConfigText(before, targetModel)
+  if (after !== before) await writeFile(configPath, after)
+}
+
+function repairCodexModelConfigText(config, targetModel) {
+  if (readRootTomlString(config, "model") !== "gpt-5.5") return config
+
+  const lines = config.split(/\n/)
+  const output = []
+  let inRoot = true
+  let wroteModel = false
+  let wroteReasoning = false
+
+  for (const line of lines) {
+    if (inRoot && isSectionHeader(line)) {
+      if (!wroteModel) output.push(`model = ${JSON.stringify(targetModel)}`)
+      if (!wroteReasoning) output.push('model_reasoning_effort = "medium"')
+      inRoot = false
+    }
+
+    if (inRoot && isRootSetting(line, "model")) {
+      if (!wroteModel) output.push(`model = ${JSON.stringify(targetModel)}`)
+      wroteModel = true
+      continue
+    }
+    if (inRoot && isRootSetting(line, "model_reasoning_effort")) {
+      if (!wroteReasoning) output.push('model_reasoning_effort = "medium"')
+      wroteReasoning = true
+      continue
+    }
+    if (inRoot && (isRootSetting(line, "model_context_window") || isRootSetting(line, "plan_mode_reasoning_effort"))) {
+      continue
+    }
+    output.push(line)
+  }
+
+  if (inRoot) {
+    if (!wroteModel) output.push(`model = ${JSON.stringify(targetModel)}`)
+    if (!wroteReasoning) output.push('model_reasoning_effort = "medium"')
+  }
+  return output.join("\n")
+}
+
+function readRootTomlString(config, key) {
+  for (const line of config.split(/\n/)) {
+    if (isSectionHeader(line)) return undefined
+    if (!isRootSetting(line, key)) continue
+    const value = line.slice(line.indexOf("=") + 1).trim()
+    if (!value.startsWith('"') || !value.endsWith('"')) return undefined
+    try {
+      return JSON.parse(value)
+    } catch {
+      return undefined
+    }
+  }
+  return undefined
+}
+
+function isSectionHeader(line) {
+  return /^\s*\[/.test(line)
+}
+
+function isRootSetting(line, key) {
+  return new RegExp(`^\\s*${escapeRegExp(key)}\\s*=`).test(line)
+}
+
+function codexModelMigrationDisabledEnv() {
+  return {
+    LAZYCODEX_CONFIG_MIGRATION_DISABLED: "1",
+    OMO_CODEX_CONFIG_MIGRATION_DISABLED: "1",
+  }
 }
 
 async function runBridge(argv) {
@@ -269,6 +375,7 @@ function printHelp() {
   lazycc bridge start [--backend mock|cursor-cli] [--api-key KEY] [--cursor-bin PATH]
   lazycc bridge doctor
   lazycc cursor ask [--api-key KEY] [--model MODEL] <prompt>
+  lazycc repair codex-model [--model MODEL]
   lazycc <omo command>
 `)
 }
@@ -279,4 +386,12 @@ function bridgeHelp() {
 
 function cursorHelp() {
   process.stdout.write("Usage: lazycc cursor ask [--api-key KEY] [--model MODEL] [--base-url URL] <prompt>\n")
+}
+
+function repairHelp() {
+  process.stdout.write("Usage: lazycc repair codex-model [--model MODEL]\n")
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
