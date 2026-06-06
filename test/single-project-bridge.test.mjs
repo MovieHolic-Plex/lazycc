@@ -30,12 +30,11 @@ test("lazycc bridge start builds and runs the vendored bridge instead of cloning
   assert.match(result.stdout, new RegExp(`node ${escapeRegExp(join(vendoredBridgeRoot, "dist", "index.js"))}`))
 })
 
-test("Codex plugin includes an internal LazyCC Cursor component", () => {
-  assert.equal(existsSync(join(pluginCursorRoot, "package.json")), true)
-  assert.equal(existsSync(join(pluginCursorRoot, "src", "cli.ts")), true)
+test("LazyCC does not ship the redundant internal lazycc-cursor wrapper", () => {
+  assert.equal(existsSync(pluginCursorRoot), false)
 
   const aggregateManifest = JSON.parse(readFileSync(join(root, "plugins", "omo", "package.json"), "utf8"))
-  assert(aggregateManifest.workspaces.includes("components/lazycc-cursor"))
+  assert.equal(aggregateManifest.workspaces.includes("components/lazycc-cursor"), false)
 })
 
 function escapeRegExp(value) {

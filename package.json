@@ -1,6 +1,6 @@
 {
   "name": "lazycc",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Codex plus Cursor CLI orchestration harness. Run `npx lazycc install` to set up the Codex platform.",
   "type": "module",
   "bin": {

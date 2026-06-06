@@ -74,12 +74,6 @@ Start the bridge:
 lazycc bridge start --backend cursor-cli --api-key "$CURSOR_BRIDGE_API_KEY"
 ```
 
-Inside the installed Codex plugin, the same internal surface is available as:
-
-```bash
-lazycc-cursor bridge --backend cursor-cli --api-key "$CURSOR_BRIDGE_API_KEY"
-```
-
 Smoke-test it without Cursor login state:
 
 ```bash
@@ -100,8 +94,7 @@ the final done claim.
 
 LazyCC keeps the LazyCodex/OmO surface as the base and applies a small LazyCC
 overlay on top: `bin/lazycc.js`, `packages/cursor-ai-proxy-bridge`,
-`plugins/omo/lazycc-skills/cursor-delegation`, and
-`plugins/omo/components/lazycc-cursor`.
+and `plugins/omo/lazycc-skills/cursor-delegation`.
 
 To pull future LazyCodex changes without losing the Cursor integration:
 

@@ -10,7 +10,6 @@
 		"components/git-bash",
 		"components/rules",
 		"components/lsp",
-		"components/lazycc-cursor",
 		"components/telemetry",
 		"components/start-work-continuation",
 		"components/ulw-loop",

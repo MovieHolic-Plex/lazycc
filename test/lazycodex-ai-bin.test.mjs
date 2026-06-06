@@ -10,7 +10,7 @@ const packageLockPath = join(root, "package-lock.json")
 const publishWorkflowPath = join(root, ".github", "workflows", "npm-publish.yml")
 const lazyccBinPath = join(root, "bin", "lazycc.js")
 const legacyBinPath = join(root, "bin", "lazycodex-ai.js")
-const releaseVersion = "0.1.0"
+const releaseVersion = "0.1.1"
 
 describe("lazycc npm package", () => {
   it("maps the package name and bins to lazycc with a legacy lazycodex-ai alias", () => {
