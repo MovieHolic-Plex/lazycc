@@ -86,13 +86,13 @@ async function runRepair(argv) {
     process.exitCode = subcommand === "help" || subcommand === undefined ? 0 : 1
     return
   }
-  await repairCodexModelConfig(readValue(argv.slice(1), "--model") ?? "gpt-5.4")
+  await repairCodexModelConfig()
 }
 
-async function repairCodexModelConfig(targetModel = "gpt-5.4") {
+async function repairCodexModelConfig() {
   const configPath = join(homedir(), ".codex", "config.toml")
   if (dryRun) {
-    process.stdout.write(`repair ${configPath} model=${targetModel}\n`)
+    process.stdout.write(`repair ${configPath} remove=model_context_window,plan_mode_reasoning_effort\n`)
     return
   }
 
@@ -104,46 +104,26 @@ async function repairCodexModelConfig(targetModel = "gpt-5.4") {
     throw error
   }
 
-  const after = repairCodexModelConfigText(before, targetModel)
+  const after = repairCodexModelConfigText(before)
   if (after !== before) await writeFile(configPath, after)
 }
 
-function repairCodexModelConfigText(config, targetModel) {
+function repairCodexModelConfigText(config) {
   if (readRootTomlString(config, "model") !== "gpt-5.5") return config
 
   const lines = config.split(/\n/)
   const output = []
   let inRoot = true
-  let wroteModel = false
-  let wroteReasoning = false
 
   for (const line of lines) {
-    if (inRoot && isSectionHeader(line)) {
-      if (!wroteModel) output.push(`model = ${JSON.stringify(targetModel)}`)
-      if (!wroteReasoning) output.push('model_reasoning_effort = "medium"')
-      inRoot = false
-    }
+    if (inRoot && isSectionHeader(line)) inRoot = false
 
-    if (inRoot && isRootSetting(line, "model")) {
-      if (!wroteModel) output.push(`model = ${JSON.stringify(targetModel)}`)
-      wroteModel = true
-      continue
-    }
-    if (inRoot && isRootSetting(line, "model_reasoning_effort")) {
-      if (!wroteReasoning) output.push('model_reasoning_effort = "medium"')
-      wroteReasoning = true
-      continue
-    }
     if (inRoot && (isRootSetting(line, "model_context_window") || isRootSetting(line, "plan_mode_reasoning_effort"))) {
       continue
     }
     output.push(line)
   }
 
-  if (inRoot) {
-    if (!wroteModel) output.push(`model = ${JSON.stringify(targetModel)}`)
-    if (!wroteReasoning) output.push('model_reasoning_effort = "medium"')
-  }
   return output.join("\n")
 }
 
@@ -375,7 +355,7 @@ function printHelp() {
   lazycc bridge start [--backend mock|cursor-cli] [--api-key KEY] [--cursor-bin PATH]
   lazycc bridge doctor
   lazycc cursor ask [--api-key KEY] [--model MODEL] <prompt>
-  lazycc repair codex-model [--model MODEL]
+  lazycc repair codex-model
   lazycc <omo command>
 `)
 }
@@ -389,7 +369,7 @@ function cursorHelp() {
 }
 
 function repairHelp() {
-  process.stdout.write("Usage: lazycc repair codex-model [--model MODEL]\n")
+  process.stdout.write("Usage: lazycc repair codex-model\n")
 }
 
 function escapeRegExp(value) {

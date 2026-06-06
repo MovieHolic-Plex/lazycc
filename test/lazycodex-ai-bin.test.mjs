@@ -68,7 +68,7 @@ describe("lazycc npm package", () => {
         `cp -R ${join(root, "plugins", "omo", "lazycc-skills", "cursor-delegation")} ${join(process.env.HOME, ".codex", "skills", "cursor-delegation")}`,
         `cp -R ${join(root, "bin")} ${join(process.env.HOME, ".codex", "lazycc", "bin")}`,
         `cp -R ${join(root, "packages", "cursor-ai-proxy-bridge")} ${join(process.env.HOME, ".codex", "lazycc", "packages", "cursor-ai-proxy-bridge")}`,
-        `repair ${join(process.env.HOME, ".codex", "config.toml")} model=gpt-5.4`,
+        `repair ${join(process.env.HOME, ".codex", "config.toml")} remove=model_context_window,plan_mode_reasoning_effort`,
       ].join("\n"),
     )
   })
@@ -101,8 +101,8 @@ describe("lazycc npm package", () => {
 
       assert.equal(result.status, 0, result.stderr)
       const repaired = readFileSync(configPath, "utf8")
-      assert.match(repaired, /model = "gpt-5\.4"/)
-      assert.match(repaired, /model_reasoning_effort = "medium"/)
+      assert.match(repaired, /model = "gpt-5\.5"/)
+      assert.match(repaired, /model_reasoning_effort = "high"/)
       assert.doesNotMatch(repaired, /model_context_window/)
       assert.doesNotMatch(repaired, /plan_mode_reasoning_effort/)
       assert.match(repaired, /\[features\]/)
