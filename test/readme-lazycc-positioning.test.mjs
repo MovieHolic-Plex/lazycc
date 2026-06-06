@@ -13,6 +13,9 @@ test("README presents LazyCC as the Codex and Cursor orchestration fork", () => 
     "cursor-ai-proxy-bridge",
     "Codex stays responsible for orchestration",
     "Cursor handles routine implementation",
+    "Upstream LazyCodex updates",
+    "git fetch upstream main",
+    "LazyCC overlay",
   ]
 
   for (const snippet of requiredSnippets) {

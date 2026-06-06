@@ -96,6 +96,25 @@ The `cursor-delegation` skill tells Codex to treat Cursor output as a draft:
 Codex reviews it, runs verification, fixes or re-delegates failures, and owns
 the final done claim.
 
+## Upstream LazyCodex updates
+
+LazyCC keeps the LazyCodex/OmO surface as the base and applies a small LazyCC
+overlay on top: `bin/lazycc.js`, `packages/cursor-ai-proxy-bridge`,
+`plugins/omo/lazycc-skills/cursor-delegation`, and
+`plugins/omo/components/lazycc-cursor`.
+
+To pull future LazyCodex changes without losing the Cursor integration:
+
+```bash
+git remote add upstream https://github.com/code-yeongyu/lazycodex.git
+git fetch upstream main
+git merge upstream/main
+npm test
+```
+
+During conflicts, keep the LazyCC overlay files authoritative and accept
+upstream changes for untouched LazyCodex/OmO files.
+
 ## ⚡ Commands
 
 LazyCC installs the LazyCodex/OmO commands for Codex. Invoke them with the
