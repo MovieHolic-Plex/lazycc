@@ -13,6 +13,7 @@ const skillSources = [
 	["rules", "components/rules/skills/rules"],
 	["ulw-loop", "components/ulw-loop/skills/ulw-loop"],
 	["ulw-plan", "components/ultrawork/skills/ulw-plan"],
+	["cursor-delegation", "lazycc-skills/cursor-delegation"],
 ];
 
 const opencodeOnlyOrchestrationPattern = /\b(?:call_omo_agent|background_output|team_[a-z_]+|task)\s*\(/;

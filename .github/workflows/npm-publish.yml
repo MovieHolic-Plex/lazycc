@@ -6,7 +6,7 @@ on:
       version:
         description: "Package version to publish"
         required: true
-        default: "0.2.2"
+        default: "0.1.0"
 
 permissions:
   contents: write
@@ -65,4 +65,4 @@ jobs:
           tag="v${{ inputs.version }}"
           git tag "$tag"
           git push origin "$tag"
-          gh release create "$tag" --title "$tag" --notes "Release lazycodex-ai@${{ inputs.version }}"
+          gh release create "$tag" --title "$tag" --notes "Release lazycc-ai@${{ inputs.version }}"

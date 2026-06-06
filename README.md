@@ -1,10 +1,10 @@
 <div align="center">
   <img src=".github/assets/lazycodex-logo.png" alt="LazyCodex" width="280">
 
-  <h1>LazyCodex</h1>
+  <h1>LazyCC</h1>
 
-  <p><strong>The one and only agent harness for complex codebases.</strong><br />
-  Project memory, planning, execution, and verified completion inside Codex.</p>
+  <p><strong>Codex orchestration with Cursor CLI execution.</strong><br />
+  Codex keeps the hard judgment work. Cursor handles the routine code writing.</p>
 
   <p>
     <a href="https://github.com/code-yeongyu/lazycodex/stargazers">
@@ -43,18 +43,62 @@
 One line. No global install, no `npm i -g`. Always use `npx`:
 
 ```bash
-npx lazycodex-ai install
+npx lazycc-ai install
 ```
 
-This is shorthand for `npx --yes --package oh-my-openagent omo install --platform=codex`. For a fully autonomous, no-TUI setup:
+This is shorthand for `npx --yes --package oh-my-openagent omo install --platform=codex`.
+The legacy `npx lazycodex-ai install` alias remains available. For a fully
+autonomous, no-TUI setup:
 
 ```bash
-npx lazycodex-ai install --no-tui --codex-autonomous
+npx lazycc-ai install --no-tui --codex-autonomous
 ```
+
+## LazyCC Cursor bridge
+
+LazyCC adds a managed Cursor bridge on top of the LazyCodex/OmO Codex setup.
+Codex stays responsible for orchestration, image generation, code review,
+verification, adversarial QA, and final acceptance. Cursor handles routine
+implementation, boilerplate, repetitive edits, and first-pass tests.
+Codex stays responsible for orchestration. Cursor handles routine implementation.
+
+The bridge manager vendors
+[cursor-ai-proxy-bridge](https://github.com/yelixir-dev/cursor-ai-proxy-bridge),
+which exposes Cursor CLI through a local OpenAI-compatible endpoint. The source
+lives in `packages/cursor-ai-proxy-bridge`, so LazyCC is a single checkout and
+does not clone the bridge at runtime.
+
+Start the bridge:
+
+```bash
+lazycc bridge start --backend cursor-cli --api-key "$CURSOR_BRIDGE_API_KEY"
+```
+
+Inside the installed Codex plugin, the same internal surface is available as:
+
+```bash
+lazycc-cursor bridge --backend cursor-cli --api-key "$CURSOR_BRIDGE_API_KEY"
+```
+
+Smoke-test it without Cursor login state:
+
+```bash
+lazycc bridge start --backend mock --api-key sk-lazycc-local
+```
+
+Delegate routine work:
+
+```bash
+lazycc cursor ask --api-key "$CURSOR_BRIDGE_API_KEY" --model composer-2.5 "write the routine implementation and tests"
+```
+
+The `cursor-delegation` skill tells Codex to treat Cursor output as a draft:
+Codex reviews it, runs verification, fixes or re-delegates failures, and owns
+the final done claim.
 
 ## ⚡ Commands
 
-LazyCodex installs these as OmO commands for Codex. Invoke them with the
+LazyCC installs the LazyCodex/OmO commands for Codex. Invoke them with the
 `$command` syntax shown by the installer.
 
 | Command | Type this | What it does |

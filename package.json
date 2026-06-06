@@ -1,13 +1,21 @@
 {
-  "name": "lazycodex-ai",
-  "version": "0.2.2",
-  "description": "Codex install alias for oh-my-openagent. Run `npx lazycodex-ai install` to set up the Codex platform.",
+  "name": "lazycc-ai",
+  "version": "0.1.0",
+  "description": "Codex plus Cursor CLI orchestration harness. Run `npx lazycc-ai install` to set up the Codex platform.",
   "type": "module",
   "bin": {
+    "lazycc": "bin/lazycc.js",
+    "lazycc-ai": "bin/lazycc.js",
     "lazycodex-ai": "bin/lazycodex-ai.js"
   },
   "files": [
     "bin",
+    "packages/cursor-ai-proxy-bridge/src",
+    "packages/cursor-ai-proxy-bridge/package.json",
+    "packages/cursor-ai-proxy-bridge/package-lock.json",
+    "packages/cursor-ai-proxy-bridge/tsconfig.json",
+    "packages/cursor-ai-proxy-bridge/tsconfig.build.json",
+    "plugins/omo/lazycc-skills",
     "README.md",
     "LICENSE"
   ],
@@ -17,6 +25,8 @@
   },
   "keywords": [
     "codex",
+    "cursor-cli",
+    "cursor-ai-bridge",
     "oh-my-openagent",
     "ai-agents",
     "orchestration"
