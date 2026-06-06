@@ -33,7 +33,7 @@
 > If you wanted OmO but did not want the setup ceremony, start here:
 >
 > ```bash
-> npx lazycodex-ai install
+> npx lazycc install
 > ```
 >
 > Context: [OmO 60K Stars on X](https://x.com/justsisyphus/status/2060210365338939452?s=20)
@@ -43,15 +43,15 @@
 One line. No global install, no `npm i -g`. Always use `npx`:
 
 ```bash
-npx lazycc-ai install
+npx lazycc install
 ```
 
 This is shorthand for `npx --yes --package oh-my-openagent omo install --platform=codex`.
-The legacy `npx lazycodex-ai install` alias remains available. For a fully
+The legacy `npx lazycc-ai install` and `npx lazycodex-ai install` aliases remain available. For a fully
 autonomous, no-TUI setup:
 
 ```bash
-npx lazycc-ai install --no-tui --codex-autonomous
+npx lazycc install --no-tui --codex-autonomous
 ```
 
 ## LazyCC Cursor bridge

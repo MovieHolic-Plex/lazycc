@@ -12,7 +12,7 @@ const lazyccBinPath = join(root, "bin", "lazycc.js")
 const legacyBinPath = join(root, "bin", "lazycodex-ai.js")
 const releaseVersion = "0.1.0"
 
-describe("lazycc-ai npm package", () => {
+describe("lazycc npm package", () => {
   it("maps the package name and bins to lazycc with a legacy lazycodex-ai alias", () => {
     // given
     assert.equal(existsSync(packageJsonPath), true, "root package.json must exist")
@@ -21,7 +21,7 @@ describe("lazycc-ai npm package", () => {
     const manifest = JSON.parse(readFileSync(packageJsonPath, "utf8"))
 
     // then
-    assert.equal(manifest.name, "lazycc-ai")
+    assert.equal(manifest.name, "lazycc")
     assert.equal(manifest.version, releaseVersion)
     assert.equal(manifest.bin?.lazycc, "bin/lazycc.js")
     assert.equal(manifest.bin?.["lazycc-ai"], "bin/lazycc.js")

@@ -7,7 +7,7 @@ const README = readFileSync("README.md", "utf8")
 test("README presents LazyCC as the Codex and Cursor orchestration fork", () => {
   const requiredSnippets = [
     "LazyCC",
-    "npx lazycc-ai install",
+    "npx lazycc install",
     "lazycc bridge start",
     "lazycc cursor ask",
     "cursor-ai-proxy-bridge",

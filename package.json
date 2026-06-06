@@ -1,7 +1,7 @@
 {
-  "name": "lazycc-ai",
+  "name": "lazycc",
   "version": "0.1.0",
-  "description": "Codex plus Cursor CLI orchestration harness. Run `npx lazycc-ai install` to set up the Codex platform.",
+  "description": "Codex plus Cursor CLI orchestration harness. Run `npx lazycc install` to set up the Codex platform.",
   "type": "module",
   "bin": {
     "lazycc": "bin/lazycc.js",
@@ -35,10 +35,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/code-yeongyu/lazycodex.git"
+    "url": "git+https://github.com/MovieHolic-Plex/lazycc.git"
   },
   "bugs": {
-    "url": "https://github.com/code-yeongyu/lazycodex/issues"
+    "url": "https://github.com/MovieHolic-Plex/lazycc/issues"
   },
-  "homepage": "https://lazycodex.ai"
+  "homepage": "https://github.com/MovieHolic-Plex/lazycc#readme"
 }

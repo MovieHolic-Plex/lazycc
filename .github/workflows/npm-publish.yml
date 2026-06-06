@@ -65,4 +65,4 @@ jobs:
           tag="v${{ inputs.version }}"
           git tag "$tag"
           git push origin "$tag"
-          gh release create "$tag" --title "$tag" --notes "Release lazycc-ai@${{ inputs.version }}"
+          gh release create "$tag" --title "$tag" --notes "Release lazycc@${{ inputs.version }}"
